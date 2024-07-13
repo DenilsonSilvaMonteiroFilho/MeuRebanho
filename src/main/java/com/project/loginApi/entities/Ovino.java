@@ -1,9 +1,9 @@
 package com.project.loginApi.entities;
 
+import com.project.loginApi.entities.Usuario.Usuario;
 import jakarta.persistence.Entity;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity(name = "ovelha")
 public class Ovino extends Animal {

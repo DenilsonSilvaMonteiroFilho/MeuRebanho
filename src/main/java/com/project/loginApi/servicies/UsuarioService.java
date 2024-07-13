@@ -1,7 +1,7 @@
 package com.project.loginApi.servicies;
 
 import com.project.loginApi.entities.Ovino;
-import com.project.loginApi.entities.Usuario;
+import com.project.loginApi.entities.Usuario.Usuario;
 import com.project.loginApi.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

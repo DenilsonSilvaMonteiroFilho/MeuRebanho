@@ -1,6 +1,6 @@
 package com.project.loginApi.repositories;
 
-import com.project.loginApi.entities.Usuario;
+import com.project.loginApi.entities.Usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
