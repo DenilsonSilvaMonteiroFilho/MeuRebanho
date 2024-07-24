@@ -60,6 +60,12 @@ public class Usuario implements UserDetails {
         this.ovinoList = ovinoList;
     }
 
+    public Usuario(String login, String encryptedPassword, PapelUsuario papel) {
+        this.login = login;
+        this.senha = encryptedPassword;
+        this.papelUsuario = papel;
+    }
+
     public Long getId() {
         return id;
     }

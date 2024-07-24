@@ -1,8 +1,8 @@
 package com.project.loginApi.entities.Usuario;
 
 public enum PapelUsuario {
-    ADMIN("admin"),
-    USUARIO("usuario");
+    ADMIN("ADMIN"),
+    USUARIO("USUARIO");
 
     private String role;
 
