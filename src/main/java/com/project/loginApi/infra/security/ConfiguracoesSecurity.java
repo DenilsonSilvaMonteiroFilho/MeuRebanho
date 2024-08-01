@@ -12,8 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.net.PasswordAuthentication;
-
 @Configuration
 @EnableWebSecurity
 public class ConfiguracoesSecurity {
@@ -24,7 +22,10 @@ public class ConfiguracoesSecurity {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .build();

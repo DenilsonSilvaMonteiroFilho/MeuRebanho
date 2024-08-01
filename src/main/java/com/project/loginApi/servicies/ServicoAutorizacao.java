@@ -15,6 +15,6 @@ public class ServicoAutorizacao implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return usuarioRepository.findByLogin(username);
     }
 }
