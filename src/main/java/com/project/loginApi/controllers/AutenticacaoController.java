@@ -1,8 +1,10 @@
 package com.project.loginApi.controllers;
 
 import com.project.loginApi.entities.Usuario.AuthenticationDTO;
+import com.project.loginApi.entities.Usuario.LoginResponseDTO;
 import com.project.loginApi.entities.Usuario.RegistroDTO;
 import com.project.loginApi.entities.Usuario.Usuario;
+import com.project.loginApi.infra.security.TokenService;
 import com.project.loginApi.repositories.UsuarioRepository;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,16 @@ public class AutenticacaoController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody /*@Valid*/ AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.senha());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.gerarToken((Usuario) auth.getPrincipal());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/registrar")
