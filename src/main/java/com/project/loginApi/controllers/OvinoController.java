@@ -1,5 +1,6 @@
 package com.project.loginApi.controllers;
 
+import com.project.loginApi.DTOs.OvinoDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.servicies.OvinoService;
@@ -23,7 +24,7 @@ public class OvinoController {
     }
 
     @PostMapping()
-    public Ovino novoOvino(@RequestBody Ovino ovino){
+    public OvinoDTO novoOvino(@RequestBody Ovino ovino){
         return ovinoService.save(ovino);
     }
 

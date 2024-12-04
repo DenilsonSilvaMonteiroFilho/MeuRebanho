@@ -1,6 +1,6 @@
 package com.project.loginApi.servicies;
 
-import com.project.loginApi.entities.Animal;
+import com.project.loginApi.DTOs.OvinoDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.repositories.OvinoRepository;
@@ -17,9 +17,12 @@ public class OvinoService {
     @Autowired
     private  VacinaService vacinaService;
 
-    public Ovino save(Ovino ovino) {
+    public OvinoDTO save(Ovino ovino) {
+        OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
+                ovino.getSexo(),ovino.getVacinas(), ovino.getProprietario());
         try {
-            return ovinoRepository.save(ovino);
+            ovinoRepository.save(ovino);
+            return ovinoDTO;
         } catch (Exception e) {
             e.printStackTrace();
         }

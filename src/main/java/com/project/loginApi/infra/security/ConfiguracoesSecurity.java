@@ -1,5 +1,7 @@
 package com.project.loginApi.infra.security;
 
+import jakarta.servlet.http.HttpSession;
+import org.hibernate.mapping.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -29,10 +32,7 @@ public class ConfiguracoesSecurity {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/usuario").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/usuario").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/ovino**").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "api/ovino**").hasRole("USER")
+                        .requestMatchers("api/**").hasRole("USUARIO")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,5 +1,12 @@
-- Validar dados do cadastro
+Finalizar:
+    Cadastro do usuario
+        APLICAR VERIFICACAO PARA DADOS OBRIGATORIOS
+        cadastro:
+            senha
+            login
+            email
+            outros dados
+    Login
+        Alterar/esqueci senha
 
-- Validar itens unicos
-    - CPF
-    - Email
+

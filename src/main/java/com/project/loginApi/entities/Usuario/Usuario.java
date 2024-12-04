@@ -40,7 +40,11 @@ public class Usuario implements UserDetails {
 
     @Column(name = "email")
     private String email;
+    @Column(name = "papelUsuario")
     private PapelUsuario papelUsuario;
+
+    @Column(name = "isAtivo")
+    private Boolean isAtivo;
 
     @OneToMany//(mappedBy = "usuario",cascade = CascadeType.ALL)
     @JoinColumn(name = "id_ovino")
@@ -50,13 +54,14 @@ public class Usuario implements UserDetails {
     public Usuario(){
 
     }
-    public Usuario(String nome, String cpf, String login, String senha, String telefone, String email, List<Ovino> ovinoList) {
+    public Usuario(String nome, String cpf, String login, String senha, String telefone, String email, Boolean isAtivo, List<Ovino> ovinoList) {
         this.nome = nome;
         this.cpf = cpf;
         this.login = login;
         this.senha = senha;
         this.telefone = telefone;
         this.email = email;
+        this.isAtivo = isAtivo;
         this.ovinoList = ovinoList;
     }
 
@@ -124,6 +129,14 @@ public class Usuario implements UserDetails {
 
     public void setOvelhaList(List<Ovino> ovinoList) {
         this.ovinoList = ovinoList;
+    }
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 
     @Override

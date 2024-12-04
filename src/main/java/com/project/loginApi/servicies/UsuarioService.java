@@ -1,11 +1,15 @@
 package com.project.loginApi.servicies;
 
+import com.project.loginApi.DTOs.UsuarioDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Usuario.Usuario;
 import com.project.loginApi.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,15 +19,6 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private OvinoService ovinoService;
-
-    public Usuario save(Usuario usuario){
-        try{
-            return usuarioRepository.saveAndFlush(usuario);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public List<Usuario> findAll(){
         return usuarioRepository.findAll();
