@@ -1,21 +1,18 @@
 package com.project.loginApi.servicies;
 
 import com.project.loginApi.DTOs.AuthenticationDTO;
-import com.project.loginApi.DTOs.UsuarioDTO;
-import com.project.loginApi.entities.Ovino;
+import com.project.loginApi.DTOs.CadastroDTO;
+import com.project.loginApi.DTOs.ResponseDTO;
 import com.project.loginApi.entities.Usuario.Usuario;
 import com.project.loginApi.infra.security.TokenService;
 import com.project.loginApi.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContaService {
@@ -25,32 +22,37 @@ public class ContaService {
     private TokenService tokenService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public ResponseEntity cadastro(UsuarioDTO usuarioDTO){
+    public ResponseEntity cadastro(CadastroDTO cadastroDTO){
         try{
-            if(this.usuarioRepository.findByLogin(usuarioDTO.login()) != null){
-                return ResponseEntity.badRequest().build();
+            Optional<Usuario> usuario = this.usuarioRepository.findByEmail(cadastroDTO.email());
+
+            if(usuario.isEmpty()) {
+                Usuario novoUsuario = new Usuario();
+
+                novoUsuario.setSenha(passwordEncoder.encode(cadastroDTO.senha()));
+                novoUsuario.setEmail(cadastroDTO.email());
+                novoUsuario.setNome(cadastroDTO.nome());
+
+                this.usuarioRepository.save(novoUsuario);
+
+                String token = this.tokenService.gerarToken(novoUsuario);
+                return ResponseEntity.ok(new ResponseDTO(novoUsuario.getNome(), token));
             }
-            List<Ovino> listaOvino = new ArrayList<>();
-            String senhaCodificada = new BCryptPasswordEncoder().encode(usuarioDTO.senha().toString());
-
-            Usuario usuario = new Usuario(usuarioDTO.nome(), usuarioDTO.cpf(), usuarioDTO.login(), senhaCodificada,
-                    usuarioDTO.telefone(), usuarioDTO.email(), usuarioDTO.isAtivo(),listaOvino);
-
-            usuarioRepository.saveAndFlush(usuario);
-            return ResponseEntity.ok().body(usuarioDTO);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        //retorna uma exeception especifica
-        return null;
+        return ResponseEntity.badRequest().build();
     }
     public ResponseEntity login(AuthenticationDTO data){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.senha());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        var token = tokenService.gerarToken((Usuario) auth.getPrincipal());
-        return ResponseEntity.ok(new AuthenticationDTO.LoginResponseDTO(token));
+        Usuario ususario = this.usuarioRepository.findByEmail(data.email()).orElseThrow(() -> new RuntimeException("User not found"));
+        if(passwordEncoder.matches(data.senha(), ususario.getPassword())) {
+            String token = this.tokenService.gerarToken(ususario);
+            return ResponseEntity.ok(new ResponseDTO(ususario.getNome(), token));
+        }
+        return ResponseEntity.badRequest().build();
     }
 }

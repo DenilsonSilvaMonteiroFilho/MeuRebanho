@@ -32,7 +32,7 @@ public class UsuarioController {
         return usuarioService.findAll();
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     public List<Usuario> novosUsuarios(@RequestBody List<Usuario> usuarios){
         return usuarioService.saveList(usuarios);
     }

@@ -1,6 +1,7 @@
 package com.project.loginApi.controllers;
 
 import com.project.loginApi.DTOs.AuthenticationDTO;
+import com.project.loginApi.DTOs.CadastroDTO;
 import com.project.loginApi.DTOs.UsuarioDTO;
 import com.project.loginApi.servicies.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AutenticacaoController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity register(@RequestBody UsuarioDTO usuarioDTO){
-        return contaService.cadastro(usuarioDTO);
+    public ResponseEntity registrar(@RequestBody CadastroDTO cadastroDTO){
+        return contaService.cadastro(cadastroDTO);
     }
 }
