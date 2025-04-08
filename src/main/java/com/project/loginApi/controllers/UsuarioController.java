@@ -1,11 +1,9 @@
 package com.project.loginApi.controllers;
 
-import com.project.loginApi.DTOs.UsuarioDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Usuario.Usuario;
 import com.project.loginApi.servicies.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,22 +30,12 @@ public class UsuarioController {
         return usuarioService.findAll();
     }
 
-    @PostMapping("/list")
-    public List<Usuario> novosUsuarios(@RequestBody List<Usuario> usuarios){
-        return usuarioService.saveList(usuarios);
-    }
-
     @PutMapping("/{id}")
     public Usuario atualizarUsuario(@RequestBody Usuario newUsuario, @PathVariable Long id) {
         return usuarioService.update(newUsuario, id);
     }
 
-    @PutMapping("/addOvino/{id}")   
-    public List<Ovino> addOvelhaParaUsuario(@RequestBody Ovino newOvino, @PathVariable Long id){
-        return usuarioService.addOvino(newOvino, id);
-    }
-
-    @GetMapping("teste/{id}")
+    @GetMapping("{id}")
     public Optional<Usuario> findById(@PathVariable Long id){
         return usuarioService.findById(id);
     }

@@ -4,6 +4,7 @@ import com.project.loginApi.DTOs.OvinoDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.servicies.OvinoService;
+import com.project.loginApi.servicies.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,24 +12,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "api/ovino")//Queria colocar api/id do usuario/ovino
+@RequestMapping(value = "api/ovino")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class OvinoController {
 
     @Autowired
     private OvinoService ovinoService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping()
     public List<Ovino> all(){
         return ovinoService.findAll();
     }
 
-    @PostMapping()
-    public OvinoDTO novoOvino(@RequestBody Ovino ovino){
-        return ovinoService.save(ovino);
+    @PutMapping("/addOvino/{id}")
+    public List<Ovino> addOvelhaParaUsuario(@RequestBody Ovino newOvino, @PathVariable Long id){
+        return usuarioService.addOvino(newOvino, id);
     }
 
-    @PostMapping("/list")
+    @PostMapping("/list")//Isso faz sentido ?
     public List<Ovino> novasOvinos(@RequestBody List<Ovino> ovinos){
         return ovinoService.saveList(ovinos);
     }
