@@ -1,0 +1,18 @@
+# Padroniza arquivos de texto para LF no repositório
+* text=auto eol=lf
+
+# Arquivos Java
+*.java text eol=lf
+
+# Arquivos de configuração comuns do Spring Boot
+*.yml text eol=lf
+*.yaml text eol=lf
+*.properties text eol=lf
+
+# Arquivos de script
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Arquivos Markdown e texto
+*.md text eol=lf
+*.txt text eol=lf
