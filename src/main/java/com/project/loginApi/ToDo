@@ -8,6 +8,15 @@ Finalizar:
             outros dados
     Login
         Alterar/esqueci senha
-Fazer:
-    Adicionar o envio do token no JSON ou alguma outra forma e exigir o teken nas requisicoes
 
+Animais:
+    Criar execptions nos services
+
+    Criar um enum para o status do animal.
+        ATIVO
+        VENDIDO
+        ABATIDO
+        FALECIDO
+
+Banco de Dados:
+    Alterar o banco de dados em memoria para um fixo PostgresSQL

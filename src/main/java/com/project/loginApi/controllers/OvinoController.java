@@ -26,7 +26,7 @@ public class OvinoController {
         return ovinoService.findAll();
     }
 
-    @PutMapping("/addOvino/{id}")
+    @PostMapping("/addOvino/{id}")
     public List<Ovino> addOvelhaParaUsuario(@RequestBody Ovino newOvino, @PathVariable Long id){
         return usuarioService.addOvino(newOvino, id);
     }
@@ -41,9 +41,14 @@ public class OvinoController {
         return ovinoService.update(newOvino, id);
     }
 
-    @PutMapping("/cadastroVacina/{id}")
+    @PostMapping("/cadastroVacina/{id}")
     public Ovino cadastroVacina(@RequestBody Vacina vacina, @PathVariable Long id){
         return ovinoService.cadastraVacinaParaOvino(vacina, id);
+    }
+
+    @PostMapping("/cadastrarPesoOvino/{idOvino}")
+    public OvinoDTO cadastrarPesoOvino(@RequestBody double vlPeso, @PathVariable Long idOvino){
+        return ovinoService.addNovoPeso(vlPeso, idOvino);
     }
 
     @GetMapping("/{id}")

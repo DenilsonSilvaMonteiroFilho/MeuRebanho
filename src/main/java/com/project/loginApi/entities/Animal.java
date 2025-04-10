@@ -29,12 +29,12 @@ public class Animal {
     private Date dataNascimento;
 
     /*@OneToOne
-    @JoinColumn(name = "pai_id")
+    @JoinColumn(name = "pai_id")//inverter a ondem id_pai
     @JsonManagedReference
     private Animal pai;
 
     @OneToOne
-    @JoinColumn(name = "mae_id")
+    @JoinColumn(name = "id_ma")
     @JsonManagedReference
     private Animal mae;*/
 
@@ -46,8 +46,10 @@ public class Animal {
     @JsonManagedReference
     private List<Vacina> vacinas;
 
-    @Column(name = "pesoNascimento")
-    private Double pesoNascimento;
+    @OneToMany
+    @JoinColumn(name = "id_peso")
+    @JsonManagedReference
+    private List<Peso> pesos;
 
     @ManyToOne
     @JoinColumn(name = "proprietario")
@@ -58,13 +60,15 @@ public class Animal {
 
     }
 
-    public Animal(Long numRegistro, Date dataNascimento/*, Animal pai, Animal mae*/, char sexo, Double pesoNascimento, Usuario proprietario) {
+    public Animal(Long numRegistro, Date dataNascimento/*, Animal pai, Animal mae*/, char sexo, List<Peso> pesos,List<Vacina> vacinas,
+                  Usuario proprietario) {
         this.numRegistro = numRegistro;
         this.dataNascimento = dataNascimento;
         //this.pai = pai;
         //this.mae = mae;
         this.sexo = sexo;
-        this.pesoNascimento = pesoNascimento;
+        this.pesos = pesos;
+        this.vacinas = vacinas;
         this.proprietario = proprietario;
     }
 
@@ -112,12 +116,12 @@ public class Animal {
         this.sexo = sexo;
     }
 
-    public Double getPesoNascimento() {
-        return pesoNascimento;
+    public List<Peso> getPesos() {
+        return this.pesos;
     }
 
-    public void setPesoNascimento(Double pesoNascimento) {
-        this.pesoNascimento = pesoNascimento;
+    public void setPesos(List<Peso> pesos) {
+        this.pesos = pesos;
     }
 
     public List<Vacina> getVacinas() {

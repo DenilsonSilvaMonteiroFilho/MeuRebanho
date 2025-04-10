@@ -2,8 +2,10 @@ package com.project.loginApi.servicies;
 
 import com.project.loginApi.DTOs.OvinoDTO;
 import com.project.loginApi.entities.Ovino;
+import com.project.loginApi.entities.Peso;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.repositories.OvinoRepository;
+import com.project.loginApi.repositories.PesoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +17,13 @@ public class OvinoService {
     @Autowired
     private OvinoRepository ovinoRepository;
     @Autowired
+    private PesoRepository pesoRepository;
+    @Autowired
     private  VacinaService vacinaService;
 
     public OvinoDTO save(Ovino ovino) {
         OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
-                ovino.getSexo(),ovino.getVacinas(), ovino.getProprietario());
+                ovino.getSexo(),ovino.getPesos(),ovino.getVacinas());
         try {
             ovinoRepository.save(ovino);
             return ovinoDTO;
@@ -27,6 +31,28 @@ public class OvinoService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public  OvinoDTO addNovoPeso(double vlPeso, Long idOvino){
+        Peso peso = new Peso(vlPeso);
+        pesoRepository.save(peso);
+
+        return (OvinoDTO) ovinoRepository.findById(idOvino)
+                .map(ovino -> {
+                    ovino.getPesos().add(peso);
+                    ovinoRepository.save(ovino);
+
+                    OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
+                            ovino.getSexo(),ovino.getPesos(),ovino.getVacinas());
+                    return ovinoDTO;
+
+                })
+                .orElseGet(() -> {
+                    return null;
+                });
+
+
+        //return ovinoDTO;
     }
 
     public List<Ovino> findAll() {
@@ -61,7 +87,7 @@ public class OvinoService {
                     //ovelha.setPai(newOvino.getPai());
                     //ovelha.setMae(newOvino.getMae());
                     ovelha.setSexo(newOvino.getSexo());
-                    ovelha.setPesoNascimento(newOvino.getPesoNascimento());
+                    ovelha.setPesos(newOvino.getPesos());
                     ovelha.setVacinas(newOvino.getVacinas());
                     return ovinoRepository.save(ovelha);
                 })
