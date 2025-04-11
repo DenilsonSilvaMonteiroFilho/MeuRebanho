@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Tarefas a Fazer ###
+src/main/java/com/project/loginApi/ToDo
