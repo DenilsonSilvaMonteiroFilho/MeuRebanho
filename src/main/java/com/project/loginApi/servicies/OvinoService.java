@@ -1,12 +1,18 @@
 package com.project.loginApi.servicies;
 
+import com.project.loginApi.DTOs.AnimalCadastroDTO;
+import com.project.loginApi.DTOs.AnimalSaidaDTO;
 import com.project.loginApi.DTOs.OvinoDTO;
+import com.project.loginApi.Mapper.AnimalMapper;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Peso;
+import com.project.loginApi.entities.Usuario.Usuario;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.repositories.OvinoRepository;
 import com.project.loginApi.repositories.PesoRepository;
+import com.project.loginApi.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +26,10 @@ public class OvinoService {
     private PesoRepository pesoRepository;
     @Autowired
     private  VacinaService vacinaService;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private AnimalMapper animalMapper;
 
     public OvinoDTO save(Ovino ovino) {
         OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
@@ -30,6 +40,20 @@ public class OvinoService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public ResponseEntity<AnimalSaidaDTO> addOvino(AnimalCadastroDTO newOvino, Long idUsuario){
+        Usuario usuario = usuarioRepository.findById(idUsuario).get();
+        if (usuario!=null && newOvino !=null){
+            Ovino ovino = ((Ovino) animalMapper.toEntityOvino(newOvino));
+            registrarPaieMae(ovino, newOvino.idPai(), newOvino.idMae());
+            ovinoRepository.save(ovino);
+            usuario.getOvinoList().add(ovino);
+            usuarioRepository.save(usuario);
+            return ResponseEntity.ok(animalMapper.toSaidaDTOOvino(ovino));
+        }
+        //Adicionar tratamento de exception
         return null;
     }
 
@@ -106,6 +130,18 @@ public class OvinoService {
                 .orElseGet(() -> {
                     return null;
                 });
+    }
+    public Ovino registrarPaieMae(Ovino ovino,Long idPai, Long idMae){
+        if(idPai != null && idPai > 0){
+            Ovino ovinoPai = ovinoRepository.findById(idPai).get();
+            //Colocar uma tratamento para quando o id nao existir
+            ovino.setPai(ovinoPai);
+        }
+        if(idMae != null && idMae != 0){
+            Ovino ovinoMae = ovinoRepository.findById(idMae).get();
+            ovino.setMae(ovinoMae);
+        }
+        return ovinoRepository.save(ovino);
     }
 
 }

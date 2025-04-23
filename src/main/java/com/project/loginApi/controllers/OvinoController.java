@@ -1,11 +1,14 @@
 package com.project.loginApi.controllers;
 
+import com.project.loginApi.DTOs.AnimalCadastroDTO;
+import com.project.loginApi.DTOs.AnimalSaidaDTO;
 import com.project.loginApi.DTOs.OvinoDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.servicies.OvinoService;
 import com.project.loginApi.servicies.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +30,8 @@ public class OvinoController {
     }
 
     @PostMapping("/addOvino/{id}")
-    public List<Ovino> addOvelhaParaUsuario(@RequestBody Ovino newOvino, @PathVariable Long id){
-        return usuarioService.addOvino(newOvino, id);
+    public ResponseEntity<AnimalSaidaDTO> addOvelhaParaUsuario(@RequestBody AnimalCadastroDTO newOvino, @PathVariable Long id){
+        return ovinoService.addOvino(newOvino, id);
     }
 
     @PostMapping("/list")//Isso faz sentido ?

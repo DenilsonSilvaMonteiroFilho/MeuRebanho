@@ -8,14 +8,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 import java.util.Date;
 import java.util.List;
 
-@Entity(name = "animal")
+@Entity(name = "tb_animal")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Animal {
 
     @Id
@@ -25,18 +29,21 @@ public class Animal {
     @Column(name = "numRegistro")
     private Long numRegistro;
 
+    @Column(name = "nome")
+    private String nome;
+
     @Column(name = "dataNascimento")
     private Date dataNascimento;
 
-    /*@OneToOne
-    @JoinColumn(name = "pai_id")//inverter a ondem id_pai
-    @JsonManagedReference
+    @ManyToOne
+    @JoinColumn(name = "id_pai")
+    @JsonBackReference("animal-pai")
     private Animal pai;
 
-    @OneToOne
-    @JoinColumn(name = "id_ma")
-    @JsonManagedReference
-    private Animal mae;*/
+    @ManyToOne
+    @JoinColumn(name = "id_mae")
+    @JsonBackReference("animal-mae")
+    private Animal mae;
 
     @Column(name = "sexo")
     private char sexo;
@@ -52,20 +59,34 @@ public class Animal {
     private List<Peso> pesos;
 
     @ManyToOne
-    @JoinColumn(name = "proprietario")
-    @JsonBackReference
+    @JoinColumn(name = "proprietario_id")
+    @JsonBackReference("proprietario")
     private Usuario proprietario;
 
     public Animal(){
 
     }
 
-    public Animal(Long numRegistro, Date dataNascimento/*, Animal pai, Animal mae*/, char sexo, List<Peso> pesos,List<Vacina> vacinas,
+    public Animal(Long numRegistro, String nome, Date dataNascimento, char sexo, List<Peso> pesos,List<Vacina> vacinas,
                   Usuario proprietario) {
         this.numRegistro = numRegistro;
+        this.nome = nome;
         this.dataNascimento = dataNascimento;
-        //this.pai = pai;
-        //this.mae = mae;
+        this.sexo = sexo;
+        this.pesos = pesos;
+        this.vacinas = vacinas;
+        this.proprietario = proprietario;
+        this.pai = new Animal();
+        this.mae = new Animal();
+    }
+
+    public Animal(Long numRegistro, String nome, Date dataNascimento, Animal pai, Animal mae, char sexo, List<Peso> pesos,List<Vacina> vacinas,
+                  Usuario proprietario) {
+        this.numRegistro = numRegistro;
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.pai = pai;
+        this.mae = mae;
         this.sexo = sexo;
         this.pesos = pesos;
         this.vacinas = vacinas;
@@ -84,6 +105,14 @@ public class Animal {
         this.numRegistro = numRegistro;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     public Date getDataNascimento() {
         return dataNascimento;
     }
@@ -92,7 +121,7 @@ public class Animal {
         this.dataNascimento = dataNascimento;
     }
 
-    /*public Animal getPai() {
+    public Animal getPai() {
         return pai;
     }
 
@@ -106,7 +135,7 @@ public class Animal {
 
     public void setMae(Animal mae) {
         this.mae = mae;
-    }*/
+    }
 
     public char getSexo() {
         return sexo;

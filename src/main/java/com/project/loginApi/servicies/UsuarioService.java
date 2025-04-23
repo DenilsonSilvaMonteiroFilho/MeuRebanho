@@ -1,5 +1,6 @@
 package com.project.loginApi.servicies;
 
+import com.project.loginApi.DTOs.AnimalCadastroDTO;
 import com.project.loginApi.DTOs.UsuarioDTO;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Usuario.Usuario;
@@ -17,8 +18,6 @@ import java.util.Optional;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
-    @Autowired
-    private OvinoService ovinoService;
 
     public List<Usuario> findAll(){
         return usuarioRepository.findAll();
@@ -58,17 +57,5 @@ public class UsuarioService {
                 .orElseGet(() -> {
                     return null;
                 });
-    }
-
-    public List<Ovino> addOvino(Ovino newOvino, Long idUsuario){
-        Usuario usuario = usuarioRepository.getById(idUsuario);
-        if (usuario!=null&& newOvino !=null){
-            ovinoService.save(newOvino);
-            usuario.getOvinoList().add(newOvino);
-            usuarioRepository.save(usuario);
-            return usuario.getOvinoList();
-        }
-        //Adicionar tratamento de exception
-        return null;
     }
 }

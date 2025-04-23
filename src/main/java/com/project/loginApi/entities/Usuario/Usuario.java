@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.loginApi.entities.Ovino;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Entity(name = "usuario")
+@Entity(name = "tb_usuario")
 public class Usuario implements UserDetails {
 
     @Id
@@ -40,16 +42,17 @@ public class Usuario implements UserDetails {
 
     @Column(name = "email")
     private String email;
+    @Enumerated(EnumType.STRING)
     @Column(name = "papelUsuario")
     private PapelUsuario papelUsuario;
 
     @Column(name = "isAtivo")
     private Boolean isAtivo;
 
-    @OneToMany//(mappedBy = "usuario",cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_ovino")
-    @JsonManagedReference
+    @OneToMany(mappedBy = "proprietario")
+    @JsonManagedReference("proprietario")
     private List<Ovino> ovinoList;
+
 
     public Usuario(){
 

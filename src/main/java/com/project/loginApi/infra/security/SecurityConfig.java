@@ -32,11 +32,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
+                        .requestMatchers("/api/ovino/**").hasRole("USER")
                         .requestMatchers(
                                 "/swagger-ui/**",  // Caminhos do Swagger UI
-                                "/v3/api-docs/**", // Caminhos das definições do OpenAPI
+                                "/v3/api-docs/**", // Caminhos das definicoes do OpenAPI
                                 "/swagger-ui.html"
-                        ).permitAll() // Permite acesso sem autenticação
+                        ).permitAll() // Permite acesso sem autenticacao
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
