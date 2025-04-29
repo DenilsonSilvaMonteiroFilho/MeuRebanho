@@ -3,7 +3,9 @@ package com.project.loginApi.servicies;
 import com.project.loginApi.DTOs.AnimalCadastroDTO;
 import com.project.loginApi.DTOs.AnimalSaidaDTO;
 import com.project.loginApi.DTOs.OvinoDTO;
-import com.project.loginApi.Mapper.AnimalMapper;
+import com.project.loginApi.exceptions.NotFoundException;
+import com.project.loginApi.exceptions.SalvarEntidadeException;
+import com.project.loginApi.mapper.AnimalMapper;
 import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Peso;
 import com.project.loginApi.entities.Usuario.Usuario;
@@ -11,7 +13,9 @@ import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.repositories.OvinoRepository;
 import com.project.loginApi.repositories.PesoRepository;
 import com.project.loginApi.repositories.UsuarioRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -31,30 +35,38 @@ public class OvinoService {
     @Autowired
     private AnimalMapper animalMapper;
 
-    public OvinoDTO save(Ovino ovino) {
-        OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
-                ovino.getSexo(),ovino.getPesos(),ovino.getVacinas());
+    public Ovino save(Ovino ovino) {
         try {
-            ovinoRepository.save(ovino);
-            return ovinoDTO;
+            return ovinoRepository.save(ovino);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SalvarEntidadeException("Erro ao salvar o ovino: " + e.getMessage());
         }
-        return null;
     }
 
-    public ResponseEntity<AnimalSaidaDTO> addOvino(AnimalCadastroDTO newOvino, Long idUsuario){
-        Usuario usuario = usuarioRepository.findById(idUsuario).get();
-        if (usuario!=null && newOvino !=null){
-            Ovino ovino = ((Ovino) animalMapper.toEntityOvino(newOvino));
-            registrarPaieMae(ovino, newOvino.idPai(), newOvino.idMae());
-            ovinoRepository.save(ovino);
-            usuario.getOvinoList().add(ovino);
-            usuarioRepository.save(usuario);
-            return ResponseEntity.ok(animalMapper.toSaidaDTOOvino(ovino));
+    public ResponseEntity<AnimalSaidaDTO> addOvino(AnimalCadastroDTO newOvino, Long idUsuario) throws BadRequestException {
+        if (newOvino == null) {
+            throw new BadRequestException("Dados do ovino não podem ser nulos.");
         }
-        //Adicionar tratamento de exception
-        return null;
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new NotFoundException("Usuário com ID " + idUsuario + " não encontrado."));
+
+        try {
+            if (usuario != null && newOvino != null) {
+                Ovino ovino = ((Ovino) animalMapper.toEntityOvino(newOvino));
+
+                registrarPaieMae(ovino, newOvino.idPai(), newOvino.idMae());
+
+                save(ovino);
+
+                usuario.getOvinoList().add(ovino);
+                usuarioRepository.save(usuario);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(animalMapper.toSaidaDTOOvino(ovino));
+            }
+        }catch (Exception e){
+           throw new SalvarEntidadeException("Erro ao tentar adicionar ovino ao usuario " + e.getMessage());
+        }
+        throw new IllegalStateException("Erro inesperado ao adicionar ovino.");
     }
 
     public  OvinoDTO addNovoPeso(double vlPeso, Long idOvino){
@@ -133,15 +145,24 @@ public class OvinoService {
     }
     public Ovino registrarPaieMae(Ovino ovino,Long idPai, Long idMae){
         if(idPai != null && idPai > 0){
-            Ovino ovinoPai = ovinoRepository.findById(idPai).get();
-            //Colocar uma tratamento para quando o id nao existir
+            Ovino ovinoPai = ovinoRepository.findById(idPai)
+                    .orElseThrow(() -> new NotFoundException("Ovino com id " + idPai + " nao encontrado."));
+
             ovino.setPai(ovinoPai);
         }
+
         if(idMae != null && idMae != 0){
-            Ovino ovinoMae = ovinoRepository.findById(idMae).get();
+            Ovino ovinoMae = ovinoRepository.findById(idMae)
+                    .orElseThrow(() -> new NotFoundException("Ovino com id " + idMae + " nao encontrado."));
+
             ovino.setMae(ovinoMae);
         }
-        return ovinoRepository.save(ovino);
+
+        try{
+            return ovinoRepository.save(ovino);
+        }catch (Exception e){
+            throw new SalvarEntidadeException("Erro ao salvar alteracao na entidade ovino " + e.getMessage());
+        }
     }
 
 }

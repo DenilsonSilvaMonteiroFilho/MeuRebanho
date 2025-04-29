@@ -7,6 +7,7 @@ import com.project.loginApi.entities.Ovino;
 import com.project.loginApi.entities.Vacina;
 import com.project.loginApi.servicies.OvinoService;
 import com.project.loginApi.servicies.UsuarioService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class OvinoController {
     }
 
     @PostMapping("/addOvino/{id}")
-    public ResponseEntity<AnimalSaidaDTO> addOvelhaParaUsuario(@RequestBody AnimalCadastroDTO newOvino, @PathVariable Long id){
+    public ResponseEntity<AnimalSaidaDTO> addOvelhaParaUsuario(@RequestBody AnimalCadastroDTO newOvino, @PathVariable Long id) throws BadRequestException {
         return ovinoService.addOvino(newOvino, id);
     }
 

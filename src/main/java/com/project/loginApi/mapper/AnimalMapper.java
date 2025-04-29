@@ -1,8 +1,7 @@
-package com.project.loginApi.Mapper;
+package com.project.loginApi.mapper;
 
 import com.project.loginApi.DTOs.AnimalCadastroDTO;
 import com.project.loginApi.DTOs.AnimalSaidaDTO;
-import com.project.loginApi.entities.Animal;
 import com.project.loginApi.entities.Ovino;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
