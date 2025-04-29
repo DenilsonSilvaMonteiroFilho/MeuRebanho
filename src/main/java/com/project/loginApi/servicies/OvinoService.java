@@ -132,17 +132,23 @@ public class OvinoService {
                 });
     }
 
-    public Ovino cadastraVacinaParaOvino(Vacina vacina, Long idOvino){
+    public ResponseEntity<Ovino> cadastraVacinaParaOvino(Vacina vacina, Long idOvino) throws BadRequestException {
+        if (vacina == null){
+            throw new BadRequestException("Dados da vacina não podem ser nulos.");
+        }
         vacinaService.save(vacina);
-        return (Ovino) ovinoRepository.findById(idOvino)
-                .map(ovino -> {
-                    ovino.getVacinas().add(vacina);
-                    return ovinoRepository.save(ovino);
-                })
-                .orElseGet(() -> {
-                    return null;
-                });
+        Ovino ovino = ovinoRepository.findById(idOvino)
+                .orElseThrow(() -> new NotFoundException("Ovino com id " + idOvino + " nao encontrado."));
+
+        ovino.getVacinas().add(vacina);
+
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(save(ovino));
+        }catch (Exception e){
+            throw new SalvarEntidadeException("Erro ao tentar salvar entidade." + e.getMessage());
+        }
     }
+
     public Ovino registrarPaieMae(Ovino ovino,Long idPai, Long idMae){
         if(idPai != null && idPai > 0){
             Ovino ovinoPai = ovinoRepository.findById(idPai)

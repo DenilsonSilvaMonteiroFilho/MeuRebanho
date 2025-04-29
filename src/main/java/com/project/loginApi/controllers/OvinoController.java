@@ -46,7 +46,7 @@ public class OvinoController {
     }
 
     @PostMapping("/cadastroVacina/{id}")
-    public Ovino cadastroVacina(@RequestBody Vacina vacina, @PathVariable Long id){
+    public ResponseEntity<Ovino> cadastroVacina(@RequestBody Vacina vacina, @PathVariable Long id) throws BadRequestException {
         return ovinoService.cadastraVacinaParaOvino(vacina, id);
     }
 
