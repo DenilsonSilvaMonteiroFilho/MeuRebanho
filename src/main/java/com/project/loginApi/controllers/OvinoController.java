@@ -51,7 +51,7 @@ public class OvinoController {
     }
 
     @PostMapping("/cadastrarPesoOvino/{idOvino}")
-    public OvinoDTO cadastrarPesoOvino(@RequestBody double vlPeso, @PathVariable Long idOvino){
+    public ResponseEntity<AnimalSaidaDTO> cadastrarPesoOvino(@RequestBody double vlPeso, @PathVariable Long idOvino){
         return ovinoService.addNovoPeso(vlPeso, idOvino);
     }
 

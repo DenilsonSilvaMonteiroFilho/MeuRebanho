@@ -3,6 +3,7 @@ package com.project.loginApi.servicies;
 import com.project.loginApi.DTOs.AnimalCadastroDTO;
 import com.project.loginApi.DTOs.AnimalSaidaDTO;
 import com.project.loginApi.DTOs.OvinoDTO;
+import com.project.loginApi.exceptions.DadoInvalidoException;
 import com.project.loginApi.exceptions.NotFoundException;
 import com.project.loginApi.exceptions.SalvarEntidadeException;
 import com.project.loginApi.mapper.AnimalMapper;
@@ -48,7 +49,7 @@ public class OvinoService {
             throw new BadRequestException("Dados do ovino não podem ser nulos.");
         }
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new NotFoundException("Usuário com ID " + idUsuario + " não encontrado."));
+                .orElseThrow(() -> new NotFoundException("Usuário com ID " + idUsuario + " nao encontrado."));
 
         try {
             if (usuario != null && newOvino != null) {
@@ -69,26 +70,19 @@ public class OvinoService {
         throw new IllegalStateException("Erro inesperado ao adicionar ovino.");
     }
 
-    public  OvinoDTO addNovoPeso(double vlPeso, Long idOvino){
+    public  ResponseEntity<AnimalSaidaDTO> addNovoPeso(double vlPeso, Long idOvino) {
+        if (vlPeso <= 0) {
+            throw new DadoInvalidoException("Valor peso cadastrado invalido. " + vlPeso);
+        }
         Peso peso = new Peso(vlPeso);
         pesoRepository.save(peso);
 
-        return (OvinoDTO) ovinoRepository.findById(idOvino)
-                .map(ovino -> {
-                    ovino.getPesos().add(peso);
-                    ovinoRepository.save(ovino);
+        Ovino ovino = ovinoRepository.findById(idOvino)
+                .orElseThrow(() -> new NotFoundException("Ovino com ID " + idOvino + "nao encontrado"));
 
-                    OvinoDTO ovinoDTO = new OvinoDTO(ovino.getNumRegistro(),ovino.getDataNascimento(),
-                            ovino.getSexo(),ovino.getPesos(),ovino.getVacinas());
-                    return ovinoDTO;
-
-                })
-                .orElseGet(() -> {
-                    return null;
-                });
-
-
-        //return ovinoDTO;
+        ovino.getPesos().add(peso);
+        save(ovino);
+        return ResponseEntity.status(HttpStatus.CREATED).body(animalMapper.toSaidaDTOOvino(ovino));
     }
 
     public List<Ovino> findAll() {
@@ -115,6 +109,7 @@ public class OvinoService {
         return null;
     }
 
+    //Atualizar esse metodo
     public Ovino update(Ovino newOvino, Long id) {
         return (Ovino) ovinoRepository.findById(id)
                 .map(ovelha -> {
@@ -141,7 +136,6 @@ public class OvinoService {
                 .orElseThrow(() -> new NotFoundException("Ovino com id " + idOvino + " nao encontrado."));
 
         ovino.getVacinas().add(vacina);
-
         try{
             return ResponseEntity.status(HttpStatus.CREATED).body(save(ovino));
         }catch (Exception e){
